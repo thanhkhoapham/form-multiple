@@ -1,0 +1,73 @@
+.typing-indicator {
+    background-color: greenyellow;
+    will-change: transform;
+    width: auto;
+    border-radius: 50px;
+    padding: 20px;
+    display: table;
+    max-width: 0 auto;
+    position: relative;
+}
+
+.typing-indicator::before, .typing-indicator::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: -2px;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background-color: #e6e7ed;
+}
+
+.typing-indicator::after {
+    height: 10px;
+    width: 10px;
+    left: -10px;
+    bottom: -10px;
+}
+
+.typing-indicator {
+    display: flex;
+    gap: 5px;
+    span {
+        height: 25px;
+        width: 25px;
+        float: left;
+        margin: 0 1px;
+        background-color: red;
+        display: block;
+        border-radius: 50%;
+        opacity: 0.1;
+    }
+}
+
+/**/
+.typing-indicator {
+    span:nth-child(1) {
+        animation: 1.6s mewo infinite 0.4s;
+    }
+}
+
+.typing-indicator {
+    span:nth-child(2) {
+        animation: 1.6s mewo infinite 0.8s;
+    }
+}
+
+.typing-indicator {
+    span:nth-child(3) {
+        animation: 1.6s mewo infinite 1.2s;
+    }
+}
+
+@keyframes mewo {
+    50% {
+        opacity: 1;;
+    }
+}
+@keyframes bulge {
+    50% {
+        transform: scale(2.05);
+    }
+}

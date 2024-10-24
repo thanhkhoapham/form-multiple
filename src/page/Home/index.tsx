@@ -1,6 +1,7 @@
 import { useState } from "react";
 import classNames from "classnames";
 import { Button } from "@material-tailwind/react";
+import Typing from "../../components/Typing";
 
 interface HomeProps {
     className?: string;
@@ -11,6 +12,7 @@ export const Home = ({className}: HomeProps) => {
 
     return <div className={classNames("container mx-auto", className)}>
     <div className="flex w-max gap-4 p-5">
+    <Typing />
       <Button
         placeholder={"What"}
         variant="gradient"

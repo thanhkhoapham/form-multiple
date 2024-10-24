@@ -1,42 +1,41 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { Autocomplete, TextField, Select, MenuItem, FormControl, InputLabel, Box, CircularProgress, Button, IconButton, FormHelperText } from '@mui/material';
+import { Autocomplete, TextField, Select, MenuItem, FormControl, InputLabel, Box, CircularProgress, Button, IconButton, FormHelperText, Typography, Grid } from '@mui/material';
 import { useDebouncedInputValues } from '../../utils/customHook'; // Import custom hook
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface OptionType {
+  id: string;
   title: string;
+  email: string;
 }
 
 interface Favorite {
-  name: string[];
+  name: OptionType[];
   type: string;
 }
 
-const fetchRandomOptions = (selectedOptions: OptionType[]): Promise<OptionType[]> => {
-  const availableOptions = [
-    { title: 'Option 1' },
-    { title: 'Option 2' },
-    { title: 'Option 3' },
-    { title: 'Option 4' },
-    { title: 'Option 5' },
-    { title: 'Option 6' },
-    { title: 'Option 7' },
-    { title: 'Option 8' },
-    { title: 'Option 9' },
-    { title: 'Option 10' },
-    { title: 'Option 11' },
-    { title: 'Option 12' },
-    { title: 'Option 13' },
-    { title: 'Option 14' },
-  ];
-
-  const filteredOptions = availableOptions.filter(
-    (option) => !selectedOptions.some((selected) => selected.title === option.title)
-  );
-
+const fetchRandomOptions = (term: string, selectedIds: string[]): Promise<OptionType[]> => {
+  // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
+      const availableOptions = [
+        { id: '1', title: 'Option 1', email: 'option1@example.com' },
+        { id: '2', title: 'Option 2', email: 'option2@example.com' },
+        { id: '3', title: 'Option 3', email: 'option3@example.com' },
+        { id: '4', title: 'Option 4', email: 'option4@example.com' },
+        { id: '5', title: 'Option 5', email: 'option5@example.com' },
+        { id: '6', title: 'Option 6', email: 'option6@example.com' },
+        { id: '7', title: 'Option 7', email: 'option7@example.com' },
+        { id: '8', title: 'Option 8', email: 'option8@example.com' },
+        { id: '9', title: 'Option 9', email: 'option9@example.com' },
+        { id: '10', title: 'Option 10', email: 'option10@example.com' },
+      ];
+
+      const filteredOptions = availableOptions.filter(
+        (option) => !selectedIds.includes(option.id) && option.title.toLowerCase().includes(term.toLowerCase())
+      );
+
       resolve(filteredOptions);
     }, 1000);
   });
@@ -76,8 +75,8 @@ const CustomForm = (): ReactElement => {
       }
 
       setLoading((prev) => ({ ...prev, [index]: true }));
-      const allSelectedOptions = Object.values(selectedOptions).flat();
-      fetchRandomOptions(allSelectedOptions).then((newOptions) => {
+      const allSelectedIds = Object.values(selectedOptions).flat().map(option => option.id);
+      fetchRandomOptions(debouncedInputValues[index], allSelectedIds).then((newOptions) => {
         setOptions((prev) => ({ ...prev, [index]: newOptions }));
         setLoading((prev) => ({ ...prev, [index]: false }));
         setIsTyping((prev) => ({ ...prev, [index]: false })); // Ngừng gọi API sau khi dữ liệu đã tải
@@ -86,10 +85,10 @@ const CustomForm = (): ReactElement => {
   }, [debouncedInputValues, selectedOptions]);
 
   return (
-    <Box>
+    <Box sx={{ width: 500 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         {fields.map((field, index) => (
-          <Box className={"flex gap-[10px]"} key={field.id} sx={{ mb: 2 }}>
+          <Box key={field.id} sx={{ mb: 2 }}>
             <Controller
               name={`favorites.${index}.name`}
               control={control}
@@ -102,9 +101,9 @@ const CustomForm = (): ReactElement => {
                     getOptionLabel={(option) => option.title}
                     filterSelectedOptions
                     loading={loading[index] || false}
-                    isOptionEqualToValue={(option, value) => option.title === value.title} // BUG
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={(_, newValue) => {
-                      field.onChange(newValue.map((v: OptionType) => v.title));
+                      field.onChange(newValue);
                       setSelectedOptions((prev) => ({ ...prev, [index]: newValue }));
                       setIsTyping((prev) => ({ ...prev, [index]: false })); // Ngừng gọi API sau khi chọn
                     }}
@@ -112,9 +111,22 @@ const CustomForm = (): ReactElement => {
                       setInputValues((prev) => ({ ...prev, [index]: newInputValue }));
                       setIsTyping((prev) => ({ ...prev, [index]: true })); // Chỉ gọi API khi người dùng nhập
                     }}
+                    renderOption={(props, option) => (
+                      <li {...props} key={option.id}>
+                        <Grid container alignItems="center">
+                          <Grid item xs={6}>
+                            <Typography variant="body1">{option.title}</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography variant="body2" color="textSecondary">{option.email}</Typography>
+                          </Grid>
+                        </Grid>
+                      </li>
+                    )}
                     renderInput={(params) => (
                       <TextField
                         {...params}
+                        label="Select multiple"
                         error={!!fieldState.error}
                         helperText={fieldState.error ? fieldState.error.message : null}
                         InputProps={{
@@ -138,9 +150,11 @@ const CustomForm = (): ReactElement => {
               control={control}
               rules={{ required: 'This field is required' }}
               render={({ field, fieldState }) => (
-                <FormControl className='w-[200px]' error={!!fieldState.error}>
+                <FormControl fullWidth sx={{ mt: 2 }} error={!!fieldState.error}>
+                  <InputLabel id={`select-label-${index}`}>Select Label</InputLabel>
                   <Select
                     labelId={`select-label-${index}`}
+                    label="Select Label"
                     {...field}
                   >
                     <MenuItem value="A">A</MenuItem>
@@ -161,10 +175,8 @@ const CustomForm = (): ReactElement => {
             )}
           </Box>
         ))}
-        <div className='flex gap-[10px]'>
         {fields.length < 3 && (
           <Button
-            variant='outlined'
             type="button"
             onClick={() => append({ name: [], type: '' })}
             sx={{ mt: 2 }}
@@ -172,10 +184,9 @@ const CustomForm = (): ReactElement => {
             Add Field
           </Button>
         )}
-        <Button variant='outlined' type="submit" sx={{ mt: 2 }}>
+        <Button type="submit" sx={{ mt: 2 }}>
           Submit
         </Button>
-        </div>
       </form>
     </Box>
   );

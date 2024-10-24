@@ -1,0 +1,97 @@
+.containerNFT {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    /*border: 1px solid black;*/
+    margin-left: 50px;
+  }
+  
+  .containerNFT .card {
+    position: relative;
+    width: 600px;
+    padding: 11px;
+    margin: 11px;
+    border: 20px solid #fff;
+  }
+  
+  .containerNFT .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 20px solid transparent;
+    border-top: 20px solid #0066FF;
+    border-right: 20px solid #0066FF;
+  }
+  
+  .containerNFT .card.active::before {
+    border-top: 20px solid #0133FF;
+    border-right: 20px solid #0133FF;
+  }
+  
+  .containerNFT .card .content {
+    position: relative;
+    height: 225px;
+    overflow: hidden;
+  }
+  
+  .containerNFT .card.active .content {
+    height: auto;
+  }
+  
+  .containerNFT .card .content::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(transparent, #fff);
+  }
+  
+  .containerNFT .card.active .content::before {
+    display: none;
+  }
+  
+  .containerNFT .card .content h3 {
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .containerNFT .card .content p {
+    font-weight: 300;
+  }
+  
+  .more {
+    border-color: #0066FF;
+  }
+  
+  .containerNFT .card .more {
+    position: relative;
+    padding: 10px 15px;
+    background: #0066FF;
+    border-radius: 8px;
+    margin-top: 15px;
+    display: inline-block;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 2px;
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  .containerNFT .card.active .more {
+    background: #0133FF;
+  }
+  
+  .containerNFT .card .more::before {
+    content: 'Read more';
+  }
+  
+  .containerNFT .card.active .more::before {
+    content: 'Read less';
+  }
